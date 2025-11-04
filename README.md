@@ -1,359 +1,224 @@
-# Stock Trading Bot
+# Stocker - Algorithmic Trading System
 
-A Python-based algorithmic trading system for learning about AI, stocks, and automated trading. This project implements a conservative day trading strategy using RSI (Relative Strength Index) and Moving Average crossovers, with three distinct phases: stock identification, backtesting, and live trading.
+A Python-based algorithmic trading system featuring multiple strategies, backtesting, live trading simulation, and comprehensive analysis tools.
 
-## Features
+## 🚀 Quick Start
 
-- **Conservative Trading Strategy**: RSI + Moving Average crossover pattern
-- **Stock Identification**: Analyze multiple stocks to find trading opportunities
-- **Backtesting Framework**: Test strategies on historical data before risking real money
-- **Paper Trading**: Test with simulated money before going live
-- **Live Trading**: Connect to Alpaca API for real trading (paper or live)
-- **Risk Management**: Built-in stop-loss and take-profit mechanisms
+```bash
+# 1. Install dependencies
+pip install -r requirements.txt
 
-## Project Structure
+# 2. Run the interactive console (recommended)
+python scripts/stocker.py
+
+# 3. Try the quick demo
+python scripts/quick_start.py
+```
+
+See [QUICKSTART.md](QUICKSTART.md) for detailed getting started guide.
+
+## 📁 Project Structure
 
 ```
 stocker/
-├── config.py              # Configuration management
-├── data_fetcher.py        # Data fetching (yfinance/Alpaca)
-├── strategy.py            # Trading strategy implementation
-├── backtester.py          # Backtesting engine
-├── broker.py              # Broker integration (Alpaca)
-├── trader.py              # Main trading bot
-├── identify_stock.py      # Stock identification script
-├── backtest.py            # Backtesting script
-├── live_trade.py          # Live trading script
-├── requirements.txt       # Python dependencies
-└── README.md              # This file
+├── README.md                 # This file
+├── QUICKSTART.md             # Getting started guide
+├── requirements.txt          # Python dependencies
+│
+├── src/                      # Core modules
+│   ├── config.py            # Configuration
+│   ├── data_fetcher.py      # Market data fetching
+│   ├── data_cache.py        # Data caching system
+│   ├── strategy.py          # Base strategy
+│   ├── strategies.py        # Multi-strategy system
+│   ├── backtester.py        # Backtesting engine
+│   ├── broker.py            # Broker integration (Alpaca)
+│   ├── trader.py            # Live trading bot
+│   ├── logger.py            # Structured logging
+│   ├── monitoring.py        # Monitoring & metrics
+│   └── validation.py        # Data validation
+│
+├── scripts/                  # User-facing scripts
+│   ├── stocker.py           # Interactive console UI (START HERE)
+│   ├── quick_start.py       # Quick demonstration
+│   ├── identify_stock.py    # Stock screener
+│   ├── backtest.py          # Backtesting tool
+│   ├── after_hours_planning.py  # After-hours planner
+│   ├── visualize.py         # Strategy visualization
+│   └── live_trade.py        # Live trading
+│
+├── tests/                    # Test suite
+├── docs/                     # Documentation
+│   └── STRATEGIES.md        # Strategy guide
+│
+└── output/                   # Generated files
+    ├── backtest_results/
+    ├── trading_plans/
+    └── logs/
 ```
 
-## Strategy Overview
+## ✨ Features
 
-The trading strategy combines two well-known technical indicators:
+### Three Trading Strategies
+- **Conservative**: Fewer trades, stricter conditions, lower risk
+- **Balanced**: Moderate trades, balanced signals (DEFAULT)
+- **Aggressive**: More trades, looser conditions, higher risk
 
-1. **RSI (Relative Strength Index)**: Identifies overbought (>70) and oversold (<30) conditions
-2. **Moving Averages**: Fast MA (9 periods) and Slow MA (21 periods) for trend identification
+### Core Capabilities
+- 📊 **Stock Screening**: Analyze 60+ stocks for trading opportunities
+- 🔄 **Backtesting**: Test strategies on historical data (6 months default)
+- 📈 **Visualization**: Chart strategies with buy/sell signals
+- 🌙 **After-Hours Planning**: Generate trading plans for next session
+- ⚖️ **Strategy Comparison**: Compare all strategies side-by-side
+- 🤖 **Live Trading**: Paper trading and dry-run simulation
+- 💾 **Data Caching**: Fetch once, analyze multiple times
 
-### Buy Signals
-- RSI crosses above oversold level (30)
-- Fast MA crosses above Slow MA (bullish crossover)
-- Price is above both moving averages
+## 🎯 Main Console UI
 
-### Sell Signals
-- RSI crosses above overbought level (70)
-- Fast MA crosses below Slow MA (bearish crossover)
-- Stop loss or take profit triggered
-
-### Risk Management
-- 2% risk per trade (configurable)
-- 2% stop loss
-- 4% take profit (2:1 risk/reward ratio)
-
-## Installation
-
-1. **Clone or create the project directory**:
-```bash
-cd stocker
-```
-
-2. **Create a virtual environment** (recommended):
-```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. **Install dependencies**:
-```bash
-pip install -r requirements.txt
-```
-
-4. **Set up environment variables**:
-Create a `.env` file in the project root:
-```bash
-# Alpaca API Credentials (get from https://alpaca.markets)
-ALPACA_API_KEY=your_api_key_here
-ALPACA_SECRET_KEY=your_secret_key_here
-ALPACA_BASE_URL=https://paper-api.alpaca.markets  # Paper trading URL
-
-# Trading Configuration
-MAX_POSITION_SIZE=1000
-RISK_PER_TRADE=0.02
-STOP_LOSS_PCT=0.02
-TAKE_PROFIT_PCT=0.04
-```
-
-## Usage
-
-### Phase 1: Identify Stocks
-
-Analyze multiple stocks to find trading opportunities:
+The easiest way to use the system:
 
 ```bash
-python identify_stock.py
+python scripts/stocker.py
 ```
 
-This will analyze a list of popular stocks and display:
-- Stocks with buy signals
-- Signal strength scores
-- Current RSI and moving average values
-- Volume information
+**Menu Options:**
+1. Quick Start Demo
+2. Identify Stocks (Stock Screener)
+3. Run Backtest
+4. Visualize Strategy
+5. Live Trading (Dry Run)
+6. Live Trading (Paper)
+7. Configuration
+8. View Logs
+9. Monitoring Report
+10. After-Hours Planning
+11. Compare Strategies
 
-You can modify the `symbols` list in `identify_stock.py` to analyze different stocks.
+## 📊 Usage Examples
 
-### Phase 2: Backtesting (Dry Runs)
+### Stock Screening
+```bash
+python scripts/identify_stock.py
+# Analyzes 60+ stocks and shows buy/sell/watch recommendations
+```
 
-Test your strategy on historical data before risking real money:
+### Backtesting
+```bash
+python scripts/backtest.py AAPL
+# Tests strategy on AAPL over last 6 months
+```
+
+### Strategy Comparison
+```bash
+python scripts/stocker.py
+# Choose Option 11 - Compare Strategies
+# See which strategy works best for your stocks
+```
+
+### After-Hours Planning
+```bash
+python scripts/after_hours_planning.py aggressive
+# Generates trading plan for tomorrow
+```
+
+## 🛠️ Configuration
+
+Create `.env` file in project root:
 
 ```bash
-# Basic backtest
-python backtest.py AAPL
+# Data Source
+DATA_SOURCE=yfinance
 
-# Backtest with specific date range
-python backtest.py AAPL 2024-01-01 2024-01-31
+# Alpaca API (for live/paper trading)
+ALPACA_API_KEY=your_key_here
+ALPACA_SECRET_KEY=your_secret_here
+ALPACA_BASE_URL=https://paper-api.alpaca.markets  # Paper trading
+
+# Strategy Parameters
+FAST_MA_PERIOD=10
+SLOW_MA_PERIOD=50
+RSI_PERIOD=14
+RSI_OVERSOLD=30
+RSI_OVERBOUGHT=70
+STOP_LOSS=0.05
+TAKE_PROFIT=0.10
 ```
 
-The backtest will show:
-- Total return and percentage
-- Number of trades executed
-- Win rate
-- Average return per trade
-- Maximum drawdown
-- Detailed trade history
+## 📈 Strategies Explained
 
-Results are saved to `backtest_results/` directory.
+### Conservative
+- RSI: 25/75 thresholds
+- MA: 15/60 periods
+- Requires BOTH RSI recovery AND MA crossover
+- **Best for**: Risk-averse traders, volatile markets
 
-**Example Output**:
-```
-BACKTEST RESULTS
-============================================================
-Initial Capital:     $10,000.00
-Final Capital:       $10,450.00
-Total Return:        $450.00
-Total Return %:      4.50%
-Number of Trades:    15
-Win Rate:            60.00%
-Average Return:      1.20%
-Max Drawdown:        -2.30%
-```
+### Balanced (Default)
+- RSI: 30/70 thresholds
+- MA: 10/50 periods
+- Uses OR logic for buy signals
+- **Best for**: Most traders, general purpose
 
-### Phase 3: Live Trading
+### Aggressive
+- RSI: 35/65 thresholds
+- MA: 8/40 periods
+- Multiple entry conditions including momentum
+- **Best for**: Active traders, trending markets
 
-⚠️ **IMPORTANT**: Always start with paper trading and dry-run mode!
+See [docs/STRATEGIES.md](docs/STRATEGIES.md) for detailed comparison.
 
-#### Step 1: Dry Run (Simulation)
-```bash
-python live_trade.py AAPL
-```
-
-This will:
-- Monitor the stock every 5 minutes
-- Show signals and potential actions
-- **NOT execute any trades** (simulation only)
-
-#### Step 2: Paper Trading (Alpaca Paper Account)
-1. Sign up for a free Alpaca account: https://alpaca.markets
-2. Get your API keys from the Alpaca dashboard
-3. Add them to your `.env` file
-4. Run with dry_run=False (still uses paper trading account):
+## 🧪 Testing
 
 ```bash
-python live_trade.py AAPL --live
+# Run all tests
+pytest
+
+# Run specific test file
+pytest tests/test_strategy.py
+
+# With verbose output
+pytest -v
 ```
 
-This will execute real orders in Alpaca's **paper trading** environment (simulated money).
+## 📚 Documentation
 
-#### Step 3: Live Trading (Real Money)
-⚠️ **WARNING**: Only proceed after extensive testing!
+- **[QUICKSTART.md](QUICKSTART.md)** - Get started in 2 minutes
+- **[docs/STRATEGIES.md](docs/STRATEGIES.md)** - Detailed strategy guide
 
-1. Change `ALPACA_BASE_URL` to `https://api.alpaca.markets` in `.env`
-2. Ensure you have real API keys for live trading
-3. Start with small position sizes
-4. Monitor closely
+## 🔧 Requirements
 
-```bash
-python live_trade.py AAPL --live
-```
+- Python 3.8+
+- See `requirements.txt` for packages
 
-## Configuration
+## ⚠️ Disclaimer
 
-Edit `config.py` or use environment variables to customize:
+This is educational software. **DO NOT use with real money without thorough testing.**
 
-- **RSI Parameters**: `RSI_PERIOD`, `RSI_OVERSOLD`, `RSI_OVERBOUGHT`
-- **Moving Average**: `FAST_MA_PERIOD`, `SLOW_MA_PERIOD`
-- **Risk Management**: `RISK_PER_TRADE`, `STOP_LOSS_PCT`, `TAKE_PROFIT_PCT`
-- **Position Sizing**: `MAX_POSITION_SIZE`
-
-## Understanding the Strategy
-
-### Why RSI + Moving Averages?
-
-This combination is popular because:
-- **RSI** helps identify when a stock is oversold (potential buy) or overbought (potential sell)
-- **Moving Averages** confirm the trend direction
-- Together, they reduce false signals and improve win rate
-
-### Conservative Approach
-
-The strategy is conservative because:
-- Requires multiple confirmations (RSI + MA crossover + price position)
-- Uses stop losses to limit losses
-- Implements position sizing based on risk
-- 2:1 risk/reward ratio (risk $2 to make $4)
-
-### Limitations
-
-- Past performance doesn't guarantee future results
-- Market conditions change
-- Algorithmic trading has risks
 - Always start with paper trading
+- Backtest extensively
+- Understand the risks
+- Never invest more than you can afford to lose
 
-## Learning Resources
+## 🤝 Contributing
 
-This project helps you learn:
+This is a learning project. Feel free to:
+- Report bugs
+- Suggest improvements
+- Add features
+- Share feedback
 
-1. **Python**: Data manipulation, API integration, OOP
-2. **Stock Market**: Technical analysis, indicators, trading strategies
-3. **AI/ML Basics**: Algorithm development, backtesting, optimization
-4. **Risk Management**: Position sizing, stop losses, portfolio management
+## 📝 License
 
-## Next Steps / Improvements
+MIT License - See LICENSE file for details
 
-Consider these enhancements:
-- Add more technical indicators (MACD, Bollinger Bands)
-- Implement machine learning for signal prediction
-- Add portfolio management (multiple stocks)
-- Create a web dashboard for monitoring
-- Add email/SMS alerts for trades
-- Optimize parameters using genetic algorithms
-- Add order types (limit orders, trailing stops)
+## 🎓 Learning Resources
 
-## Important Disclaimers
-
-⚠️ **Trading Risk Warning**:
-- Trading stocks involves substantial risk of loss
-- Past performance does not guarantee future results
-- This is educational software - use at your own risk
-- Always test thoroughly before using real money
-- Start with paper trading and small positions
-- Never risk more than you can afford to lose
-
-⚠️ **Legal Disclaimer**:
-- This software is for educational purposes only
-- Not financial advice
-- The authors are not responsible for trading losses
-- Ensure compliance with your local regulations
-
-## Testing
-
-The project includes a comprehensive test suite to ensure core behaviors work correctly.
-
-### Running Tests
-
-1. **Install test dependencies** (if not already installed):
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Run all tests**:
-   ```bash
-   pytest tests/ -v
-   ```
-   
-   Or use the test runner:
-   ```bash
-   python run_tests.py
-   ```
-
-3. **Run specific test files**:
-   ```bash
-   pytest tests/test_strategy.py -v
-   pytest tests/test_backtester.py -v
-   ```
-
-4. **Run tests with coverage** (optional):
-   ```bash
-   pip install pytest-cov
-   pytest tests/ --cov=. --cov-report=html
-   ```
-
-### Test Structure
-
-- **`tests/test_config.py`** - Configuration loading and defaults
-- **`tests/test_strategy.py`** - Trading strategy calculations and signals
-- **`tests/test_data_fetcher.py`** - Data fetching functionality
-- **`tests/test_backtester.py`** - Backtesting engine
-- **`tests/test_integration.py`** - Integration tests (may be slower)
-
-### What's Tested
-
-✅ **Strategy Module**:
-- RSI and Moving Average calculations
-- Signal generation logic
-- Buy/sell signal conditions
-- Edge cases (empty data, minimal data)
-
-✅ **Data Fetcher**:
-- yfinance integration
-- Alpaca integration (mocked)
-- Error handling for invalid symbols
-- Data format standardization
-
-✅ **Backtester**:
-- Trade simulation
-- Portfolio value tracking
-- Performance metrics calculation
-- Win rate and return calculations
-
-✅ **Integration**:
-- End-to-end backtest flow
-- Strategy consistency
-- Config integration
-
-### Writing Your Own Tests
-
-Tests use `pytest` and follow standard Python testing patterns:
-
-```python
-def test_my_feature():
-    """Test description"""
-    # Arrange
-    data = create_test_data()
-    
-    # Act
-    result = my_function(data)
-    
-    # Assert
-    assert result == expected_value
-```
-
-See existing tests in `tests/` for examples.
-
-## Troubleshooting
-
-### "No data found for symbol"
-- Check if the symbol is valid
-- Ensure you have internet connection
-- Some symbols may not have 5-minute data available
-
-### "Failed to connect to broker"
-- Verify your Alpaca API keys in `.env`
-- Check if you're using the correct base URL (paper vs live)
-- Ensure your Alpaca account is active
-
-### Import errors
-- Make sure you've installed all dependencies: `pip install -r requirements.txt`
-- Check that you're using the correct Python version (3.8+)
-
-## License
-
-This project is for educational purposes. Use at your own risk.
-
-## Contributing
-
-Feel free to fork, modify, and improve this project for your own learning!
+Built to learn about:
+- Algorithmic trading
+- Technical analysis (RSI, Moving Averages)
+- Backtesting frameworks
+- Trading psychology
+- Risk management
 
 ---
 
-**Happy Trading!** 📈 (But remember: paper trade first! 🧪)
-
+**Happy Trading! 🚀** (With paper money first! 😉)

@@ -1,20 +1,26 @@
-.env
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
+*.py[cod]
+*$py.class
 *.so
-*.egg
-*.egg-info/
-dist/
-build/
-.venv/
+.Python
 venv/
-*.log
-.DS_Store
-data/
-*.csv
-*.json
-backtest_results/
+ENV/
+env/
 
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+.env
+.cache/
+output/
+*.log
+*.csv
+
+# OS
+.DS_Store
+Thumbs.db
