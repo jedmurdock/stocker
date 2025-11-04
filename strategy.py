@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from ta.momentum import RSIIndicator
 from ta.trend import SMAIndicator
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 from config import Config
 
 
@@ -40,7 +40,18 @@ class TradingStrategy:
             
         Returns:
             DataFrame with added indicator columns
+            
+        Raises:
+            ValueError: If df is empty or missing required columns
         """
+        if df.empty:
+            raise ValueError("Cannot calculate indicators on empty DataFrame")
+        
+        required_columns = ['open', 'high', 'low', 'close', 'volume']
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        if missing_columns:
+            raise ValueError(f"DataFrame missing required columns: {missing_columns}")
+        
         df = df.copy()
         
         # Calculate RSI
@@ -86,8 +97,8 @@ class TradingStrategy:
         # Sell conditions
         sell_condition = (
             (df['rsi'] > self.config.RSI_OVERBOUGHT) |  # RSI overbought
-            (df['fast_ma'] < df['slow_ma']) &  # Fast MA below Slow MA
-            (df['fast_ma_prev'] >= df['slow_ma_prev'])  # Bearish crossover
+            ((df['fast_ma'] < df['slow_ma']) &  # Fast MA below Slow MA
+            (df['fast_ma_prev'] >= df['slow_ma_prev']))  # Bearish crossover
         )
         
         df.loc[buy_condition, 'signal'] = 1
@@ -109,7 +120,7 @@ class TradingStrategy:
         df_with_signals = self.generate_signals(df_with_indicators)
         return df_with_signals
     
-    def get_current_signal(self, df: pd.DataFrame) -> Dict[str, any]:
+    def get_current_signal(self, df: pd.DataFrame) -> Dict[str, Any]:
         """
         Get the most recent trading signal.
         
@@ -118,7 +129,13 @@ class TradingStrategy:
             
         Returns:
             Dictionary with signal information
+            
+        Raises:
+            ValueError: If df is empty
         """
+        if df.empty:
+            raise ValueError("Cannot generate signal from empty DataFrame")
+        
         analyzed_df = self.analyze(df)
         latest = analyzed_df.iloc[-1]
         

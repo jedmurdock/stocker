@@ -50,7 +50,8 @@ class Trader:
         try:
             current_price = self.broker.get_current_price(self.symbol)
             signal_info['broker_price'] = current_price
-        except:
+        except Exception as e:
+            # Fallback to price from data if broker fails
             signal_info['broker_price'] = signal_info['price']
         
         return signal_info

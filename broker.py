@@ -28,6 +28,13 @@ class Broker:
     
     def _connect(self):
         """Establish connection to broker API"""
+        # Validate credentials
+        if not self.config.ALPACA_API_KEY or not self.config.ALPACA_SECRET_KEY:
+            raise ValueError(
+                "Alpaca API credentials not configured. "
+                "Please set ALPACA_API_KEY and ALPACA_SECRET_KEY in your .env file."
+            )
+        
         try:
             import alpaca_trade_api as tradeapi
             
@@ -93,10 +100,13 @@ class Broker:
         try:
             quote = self.api.get_latest_quote(symbol)
             return float(quote.bp)  # Use bid price
-        except:
+        except Exception as e:
             # Fallback to last trade price
-            trade = self.api.get_latest_trade(symbol)
-            return float(trade.price)
+            try:
+                trade = self.api.get_latest_trade(symbol)
+                return float(trade.price)
+            except Exception as trade_error:
+                raise RuntimeError(f"Failed to get current price for {symbol}: {trade_error}")
     
     def place_order(self, symbol: str, qty: int, side: str, 
                    order_type: str = 'market', time_in_force: str = 'day',
@@ -116,12 +126,19 @@ class Broker:
             
         Returns:
             Order information dictionary
+            
+        Raises:
+            ValueError: If side is invalid or qty is not positive
+            RuntimeError: If not connected or order fails
         """
         if not self.api:
             raise RuntimeError("Not connected to broker")
         
         if side not in ['buy', 'sell']:
             raise ValueError("side must be 'buy' or 'sell'")
+        
+        if qty <= 0:
+            raise ValueError(f"qty must be positive, got: {qty}")
         
         try:
             # Place main order

@@ -60,7 +60,7 @@ def quick_demo():
     
     try:
         backtester = Backtester(initial_capital=10000)
-        results = backtester.run_backtest(symbol, period=30)
+        results = backtester.run_backtest(symbol)
         
         print(f"✓ Backtest complete")
         print(f"  Initial Capital: ${results['initial_capital']:,.2f}")

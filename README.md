@@ -244,6 +244,91 @@ Consider these enhancements:
 - The authors are not responsible for trading losses
 - Ensure compliance with your local regulations
 
+## Testing
+
+The project includes a comprehensive test suite to ensure core behaviors work correctly.
+
+### Running Tests
+
+1. **Install test dependencies** (if not already installed):
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Run all tests**:
+   ```bash
+   pytest tests/ -v
+   ```
+   
+   Or use the test runner:
+   ```bash
+   python run_tests.py
+   ```
+
+3. **Run specific test files**:
+   ```bash
+   pytest tests/test_strategy.py -v
+   pytest tests/test_backtester.py -v
+   ```
+
+4. **Run tests with coverage** (optional):
+   ```bash
+   pip install pytest-cov
+   pytest tests/ --cov=. --cov-report=html
+   ```
+
+### Test Structure
+
+- **`tests/test_config.py`** - Configuration loading and defaults
+- **`tests/test_strategy.py`** - Trading strategy calculations and signals
+- **`tests/test_data_fetcher.py`** - Data fetching functionality
+- **`tests/test_backtester.py`** - Backtesting engine
+- **`tests/test_integration.py`** - Integration tests (may be slower)
+
+### What's Tested
+
+✅ **Strategy Module**:
+- RSI and Moving Average calculations
+- Signal generation logic
+- Buy/sell signal conditions
+- Edge cases (empty data, minimal data)
+
+✅ **Data Fetcher**:
+- yfinance integration
+- Alpaca integration (mocked)
+- Error handling for invalid symbols
+- Data format standardization
+
+✅ **Backtester**:
+- Trade simulation
+- Portfolio value tracking
+- Performance metrics calculation
+- Win rate and return calculations
+
+✅ **Integration**:
+- End-to-end backtest flow
+- Strategy consistency
+- Config integration
+
+### Writing Your Own Tests
+
+Tests use `pytest` and follow standard Python testing patterns:
+
+```python
+def test_my_feature():
+    """Test description"""
+    # Arrange
+    data = create_test_data()
+    
+    # Act
+    result = my_function(data)
+    
+    # Assert
+    assert result == expected_value
+```
+
+See existing tests in `tests/` for examples.
+
 ## Troubleshooting
 
 ### "No data found for symbol"

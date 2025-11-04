@@ -32,9 +32,18 @@ class DataFetcher:
             
         Returns:
             DataFrame with OHLCV data and datetime index
+            
+        Raises:
+            ValueError: If symbol is invalid or data source is unknown
         """
+        if not symbol or not isinstance(symbol, str):
+            raise ValueError(f"Invalid symbol: {symbol}")
+        
         if period is None:
             period = self.config.LOOKBACK_DAYS
+        
+        if period <= 0:
+            raise ValueError(f"Period must be positive, got: {period}")
         
         if self.source == 'yfinance':
             return self._fetch_yfinance(symbol, period)
@@ -94,7 +103,18 @@ class DataFetcher:
             raise ImportError("alpaca-trade-api not installed. Install with: pip install alpaca-trade-api")
     
     def get_current_price(self, symbol: str) -> float:
-        """Get current price of a symbol"""
+        """
+        Get current price of a symbol.
+        
+        Args:
+            symbol: Stock ticker symbol
+            
+        Returns:
+            Current price as float
+            
+        Raises:
+            ValueError: If price cannot be fetched
+        """
         if self.source == 'yfinance':
             ticker = yf.Ticker(symbol)
             data = ticker.history(period='1d', interval='1m')
@@ -102,14 +122,17 @@ class DataFetcher:
                 return float(data['Close'].iloc[-1])
             raise ValueError(f"Could not fetch current price for {symbol}")
         elif self.source == 'alpaca':
-            import alpaca_trade_api as tradeapi
-            api = tradeapi.REST(
-                self.config.ALPACA_API_KEY,
-                self.config.ALPACA_SECRET_KEY,
-                self.config.ALPACA_BASE_URL
-            )
-            quote = api.get_latest_quote(symbol)
-            return float(quote.bp)  # Use bid price
+            try:
+                import alpaca_trade_api as tradeapi
+                api = tradeapi.REST(
+                    self.config.ALPACA_API_KEY,
+                    self.config.ALPACA_SECRET_KEY,
+                    self.config.ALPACA_BASE_URL
+                )
+                quote = api.get_latest_quote(symbol)
+                return float(quote.bp)  # Use bid price
+            except Exception as e:
+                raise ValueError(f"Could not fetch current price for {symbol}: {e}")
         else:
             raise ValueError(f"Unknown data source: {self.source}")
 

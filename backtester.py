@@ -149,6 +149,26 @@ class Backtester:
             
             portfolio_values.append(portfolio_value)
         
+        # Close any remaining open position at the end of backtest
+        if position is not None:
+            final_price = df.iloc[-1]['close']
+            pnl = (final_price - position['entry_price']) * position['shares']
+            capital += final_price * position['shares']
+            
+            trades.append({
+                'entry_time': position['entry_time'],
+                'exit_time': df.index[-1],
+                'entry_price': position['entry_price'],
+                'exit_price': final_price,
+                'shares': position['shares'],
+                'pnl': pnl,
+                'return_pct': (final_price - position['entry_price']) / position['entry_price'] * 100,
+                'exit_reason': 'end_of_backtest'
+            })
+            
+            # Update final portfolio value
+            portfolio_values[-1] = capital
+        
         portfolio_series = pd.Series(portfolio_values, index=df.index)
         
         return trades, portfolio_series
